@@ -1,11 +1,6 @@
 package org.quicktheories.coverage;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.quicktheories.core.Guidance;
 import org.quicktheories.core.PseudoRandom;
@@ -16,13 +11,14 @@ import net.bytebuddy.agent.ByteBuddyAgent.ProcessProvider;
 import sun.quicktheories.coverage.CodeCoverageStore;
 
 public class CoverageGuidance implements Guidance {
-  private static final int UNGUIDED_EXECUTIONS = 3;
+  private static final int UNGUIDED_EXECUTIONS = 0;
     
   static {
     Installer in = new Installer(new ClassloaderByteArraySource(Thread.currentThread().getContextClassLoader()));
     ByteBuddyAgent.attach(in.createJar(), ProcessProvider.ForCurrentVm.INSTANCE);
   }
 
+  private final Set<Precursor> coverageIncreasingPrecursors = new HashSet<>(); // TODO: per method?
   private final PseudoRandom prng; 
   private final Set<Long> visitedBranches = new HashSet<Long>();
   
@@ -44,11 +40,12 @@ public class CoverageGuidance implements Guidance {
 
   @Override
   public Collection<long[]> suggestValues(int execution, Precursor precursor) {
-    if (execution <= UNGUIDED_EXECUTIONS) {
+    if (execution < UNGUIDED_EXECUTIONS) {
       return Collections.emptyList();
     }
 
     if (!visitedBranches.containsAll(currentHits)) {
+      coverageIncreasingPrecursors.add(precursor);
       List<long[]> nearBy = new ArrayList<long[]>();
       for (int i = 0; i != 20; i++) {
         nearBy.add(valueNear(precursor));
@@ -71,4 +68,8 @@ public class CoverageGuidance implements Guidance {
     return ls;
   }
 
+  @Override
+  public Optional<Set<Precursor>> getGuidanceRelevantPrecursors() {
+    return Optional.of(coverageIncreasingPrecursors);
+  }
 }

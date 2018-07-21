@@ -7,6 +7,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.CRC32;
 
 import org.quicktheories.api.Pair;
@@ -17,6 +20,7 @@ import org.quicktheories.core.Strategy;
 
 class Core {
 
+  private static List<Object> values = null; // LOL, nothing matters
   private final Strategy      config;
   private int                 examplesUsed           = 0;
   private Optional<Throwable> smallestFoundThrowable = Optional.empty();
@@ -27,12 +31,12 @@ class Core {
     this.config = config;
   }
 
-  <T> SearchResult<T> run(Property<T> prop) {
+  <T, S> SearchResult<T> run(Property<T> prop, Function<T, S> f) {
     List<T> falsifyingValues = new ArrayList<>();
     boolean exhausted = false;
     try {
       Optional<Pair<Falsification<T>, PrecursorDataPair<T>>> falisfying = findFalsifyingValue(
-          prop);
+          prop, f);
       if (falisfying.isPresent()) {
         smallestFoundThrowable = falisfying.get()._1.cause();
         falsifyingValues.add(falisfying.get()._1.value());
@@ -46,8 +50,8 @@ class Core {
         smallestFoundThrowable);
   }
 
-  <T> Optional<Pair<Falsification<T>, PrecursorDataPair<T>>> findFalsifyingValue(
-      Property<T> prop) {
+  <T, S> Optional<Pair<Falsification<T>, PrecursorDataPair<T>>> findFalsifyingValue(
+      Property<T> prop, Function<T, S> someFn) {
     
     Guidance guidance = config.guidance();
     
@@ -81,10 +85,30 @@ class Core {
       
       guidance.exampleComplete();
 
-    }   
+    }
+    storeValues(guidance, prop, someFn);
     return Optional.empty();
   }
 
+  protected List<Object> getValues() {
+    return values;
+  }
+
+  protected <T, S> void storeValues(Guidance guidance, Property<T> prop, Function<T, S> f) {
+    if (f != null) {
+      staticStoreValues(guidance.getGuidanceRelevantPrecursors().map(precursors ->
+              precursors.stream().map(precursor -> {
+                Distribution<T> distribution = new ForcedDistribution(config, prop.getGen(), precursor.current());
+                T value = distribution.generate().value();
+                return Pair.of(value, f.apply(value));
+              }).collect(Collectors.toList())).orElse(new ArrayList<>()));
+    }
+  }
+
+
+  protected static <T,S> void staticStoreValues(List<Pair<T,S>> pairs) {
+    values = new ArrayList<>(pairs);
+  }
 
   <T> List<T> shrink(PrecursorDataPair<T> precursor, Property<T> prop) {
     PrecursorDataPair<T> lastSmallestState = precursor;

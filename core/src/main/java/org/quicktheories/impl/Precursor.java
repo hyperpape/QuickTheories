@@ -1,10 +1,7 @@
 package org.quicktheories.impl;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.OptionalLong;
+import java.util.*;
 
 public final class Precursor {
   
@@ -12,12 +9,30 @@ public final class Precursor {
   
   private ByteBuffer buffer = ByteBuffer.allocate(1);
   private final List<Constraint> constraints;
+  private int hashCode;
   
   public Precursor() {
     this.buffer = ByteBuffer.allocate(INITIAL_SIZE);
     this.constraints = new ArrayList<>();
   }
-  
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Precursor precursor = (Precursor) o;
+    return Objects.equals(buffer, precursor.buffer) &&
+            Objects.equals(constraints, precursor.constraints);
+  }
+
+  @Override
+  public int hashCode() {
+    if (hashCode == 0) {
+      hashCode = Objects.hash(buffer, constraints);
+    }
+    return hashCode;
+  }
+
   public boolean isEmpty() {
     return buffer.position() == 0;
   }

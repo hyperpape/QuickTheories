@@ -1,12 +1,16 @@
 package org.quicktheories.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.quicktheories.api.AsString;
+import org.quicktheories.api.Pair;
+import org.quicktheories.core.Configuration;
 import org.quicktheories.core.Gen;
 import org.quicktheories.core.Strategy;
+import org.quicktheories.generators.SourceDSL;
 
 public final class TheoryRunner<P, T> {
 
@@ -28,16 +32,25 @@ public final class TheoryRunner<P, T> {
     return new TheoryRunner<>(state, source, t -> t, source);
   }
 
-  public void check(final Predicate<T> property) {
+  public <S> void check(final Predicate<T> property) {
+    check(property, null);
+  }
+
+  public <S> List<Pair<T, S>> check(final Predicate<T> property, Function<T, S> f) {
     final Core core = new Core(this.strategy);
     final Property<T> prop = new Property<>(property,
         this.precursorSource.map(this.precursorToValue));
-    final SearchResult<T> results = core.run(prop);
+    final SearchResult<T> results = core.run(prop, f);
     if (results.isFalsified()) {
       reportFalsification(results);
     } else if (results.wasExhausted()) {
       this.strategy.reporter().valuesExhausted(results.getExecutedExamples());
     }
+    List<Pair<T, S>> pairs = new ArrayList<>();
+    for (Object obj : core.getValues()) {
+        pairs.add((Pair<T,S>) obj);
+    }
+    return pairs;
 
   }
 

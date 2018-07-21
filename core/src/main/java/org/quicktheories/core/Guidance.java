@@ -1,6 +1,8 @@
 package org.quicktheories.core;
 
 import java.util.Collection;
+import java.util.Optional;
+import java.util.Set;
 
 import org.quicktheories.impl.Precursor;
 
@@ -16,5 +18,7 @@ public interface Guidance {
   Collection<long[]> suggestValues(int i, Precursor t);
 
   void exampleComplete();
+
+  Optional<Set<Precursor>> getGuidanceRelevantPrecursors();
 
 }

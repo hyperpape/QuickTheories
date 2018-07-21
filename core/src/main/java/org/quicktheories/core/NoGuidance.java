@@ -2,6 +2,8 @@ package org.quicktheories.core;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 import org.quicktheories.impl.Precursor;
 
@@ -18,6 +20,11 @@ public class NoGuidance implements Guidance {
 
   @Override
   public void exampleComplete() {
+  }
+
+  @Override
+  public Optional<Set<Precursor>> getGuidanceRelevantPrecursors() {
+    return Optional.empty();
   }
 
   @Override
