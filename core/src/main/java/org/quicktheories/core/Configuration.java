@@ -12,7 +12,7 @@ import java.util.stream.StreamSupport;
 public abstract class Configuration {
 
   private static final int DEFAULT_NO_ATTEMPTS = 10;
-  private static final int DEFAULT_NO_EXAMPLES = 1000;
+  private static final int DEFAULT_NO_EXAMPLES = 20000;
   
   public final static String SEED = "QT_SEED";
   public final static String EXAMPLES = "QT_EXAMPLES";
