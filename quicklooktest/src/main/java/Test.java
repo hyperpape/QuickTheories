@@ -12,8 +12,8 @@ public class Test {
 
     public static void main(String[] args) {
         Test test = new Test();
-        Function<String, String> fn = s -> String.valueOf(test.incorrectIsEmailValid(s));
-        List<Pair<String, String>> values = explore(fn, SourceDSL.strings().basicLatinAlphabet().ofLengthBetween(0, 32));
+        Function<String, Boolean> fn = s -> incorrectIsEmailValid(s);
+        List<Pair<String, Boolean>> values = explore(fn, SourceDSL.strings().basicLatinAlphabet().ofLengthBetween(0, 32));
         values.forEach(System.out::println);
     }
 
@@ -24,7 +24,7 @@ public class Test {
      * @param <S> the
      * @return
      */
-    public static <S> List<Pair<S, S>> explore(Function<S,S> f, Gen<S> generator) {
+    public static <S, T> List<Pair<S, T>> explore(Function<S, T> f, Gen<S> generator) {
         Strategy state = Configuration.systemStrategy();
         Function<S, S> identity = Function.identity();
         TheoryRunner<S, S> runner = new TheoryRunner<>(state, generator, identity, S::toString);
@@ -67,8 +67,11 @@ public class Test {
 
     private static boolean allValidChars(String s) {
         for (int i = 0; i < s.length(); i++) {
-            if (s.charAt(i) < '.' || s.charAt(i) > 'z') {
-                return false;
+            char c = s.charAt(i);
+            if (c < 'A' || c > 'z') {
+                if (c != '.') {
+                    return false;
+                }
             }
         }
         return true;
