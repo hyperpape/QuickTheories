@@ -104,8 +104,8 @@ class Core {
               }).collect(Collectors.toList())).orElse(new ArrayList<>()));
     }
   }
-
-
+  
+  // Convinces FindBugs this is on the level
   protected static <T,S> void staticStoreValues(List<Pair<T,S>> pairs) {
     values = new ArrayList<>(pairs);
   }
