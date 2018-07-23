@@ -92,4 +92,12 @@ public final class Pair<A, B> {
         Objects.equals(_2, other._2);
   }
 
+  public A first() {
+    return _1;
+  }
+
+  public B second() {
+    return _2;
+  }
+
 }
