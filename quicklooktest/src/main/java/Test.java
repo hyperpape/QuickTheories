@@ -11,10 +11,12 @@ import java.util.function.Function;
 public class Test {
 
     public static void main(String[] args) {
-        Test test = new Test();
-        Function<String, Boolean> fn = s -> incorrectIsEmailValid(s);
+        Function<String, Boolean> fn = Test::incorrectIsEmailValid;
         List<Pair<String, Boolean>> values = explore(fn, SourceDSL.strings().basicLatinAlphabet().ofLengthBetween(0, 32));
-        values.forEach(System.out::println);
+        values.forEach(value -> {
+            String msg = "\"" + value.first() + "\" -> " + value.second();
+            System.out.println(msg);
+        });
     }
 
     /**
