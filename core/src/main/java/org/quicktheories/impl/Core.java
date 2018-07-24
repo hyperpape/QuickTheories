@@ -1,15 +1,8 @@
 package org.quicktheories.impl;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.CRC32;
 
 import org.quicktheories.api.Pair;
@@ -59,6 +52,7 @@ class Core {
     ArrayDeque<long[]> toVisit = new ArrayDeque<>();
 
     Distribution<T> distribution;
+
     for (int i = 0; i != config.examples(); i++) {
       if (toVisit.isEmpty()) {
         distribution = randomDistribution;
@@ -73,7 +67,6 @@ class Core {
       
       examplesUsed = examplesUsed + 1;
       guidance.newExample(t.precursor());
-      
       Optional<Falsification<T>> falsification = prop.tryFalsification(t.value());
       guidance.exampleExecuted();
 
@@ -86,7 +79,7 @@ class Core {
       guidance.exampleComplete();
 
     }
-    storeValues(guidance, prop, someFn);
+    handleExploredValues(guidance, prop, someFn);
     return Optional.empty();
   }
 
@@ -94,20 +87,62 @@ class Core {
     return values;
   }
 
-  protected <T, S> void storeValues(Guidance guidance, Property<T> prop, Function<T, S> f) {
+  protected <T, S> void handleExploredValues(Guidance guidance, Property<T> prop, Function<T, S> f) {
     if (f != null) {
-      staticStoreValues(guidance.getGuidanceRelevantPrecursors().map(precursors ->
-              precursors.stream().map(precursor -> {
-                Distribution<T> distribution = new ForcedDistribution(config, prop.getGen(), precursor.current());
-                T value = distribution.generate().value();
-                return Pair.of(value, f.apply(value));
-              }).collect(Collectors.toList())).orElse(new ArrayList<>()));
+      guidance.getGuidanceRelevantPrecursors().ifPresent(precursorMap -> {
+        for (Map.Entry<Collection<Long>, Precursor> entry : precursorMap.entrySet()) {
+          precursorMap.put(entry.getKey(), coverageShrink(guidance, entry.getKey(), entry.getValue(), prop));
+        }
+        List<Pair<T, S>> mapping = precursorMap.values().stream().map(precursor -> {
+          Distribution<T> distribution = new ForcedDistribution(config, prop.getGen(), precursor.current());
+          T value = distribution.generate().value();
+          return Pair.of(value, f.apply(value));
+        }).collect(Collectors.toList());
+        staticStoreValues(mapping);
+      });
     }
   }
   
   // Convinces FindBugs this is on the level
   protected static <T,S> void staticStoreValues(List<Pair<T,S>> pairs) {
     values = new ArrayList<>(pairs);
+  }
+
+
+  <T> Precursor coverageShrink(Guidance guidance, Collection<Long> coverage, Precursor precursor, Property<T> prop) {
+    Precursor lastSmallestState = precursor;
+
+    ShrinkStrategy shrink = new SimpleShrink();
+    try {
+      for (int i = 0; i != config.shrinkCycles(); i++) {
+
+        if (lastSmallestState.isEmpty()) {
+          break;
+        }
+
+        long[] shrunk = shrink.shrink(config.prng(),lastSmallestState);
+
+        PrecursorDataPair<T> t = generate(prop.getGen(), shrunk,
+                config.generateAttempts());
+
+        if (checkHash(t)) {
+          continue;
+        }
+
+        guidance.newExample(t.precursor());
+        prop.tryFalsification(t.value());
+        guidance.exampleExecuted();
+        if (guidance.matches(coverage)) {
+          lastSmallestState = t.precursor();
+        }
+
+      }
+    } catch (AttemptsExhaustedException ex) {
+      // swallow - if we got as far as shrinking we were unlucky to run out of
+      // values now but we might have found some results earlier
+    }
+
+    return lastSmallestState;
   }
 
   <T> List<T> shrink(PrecursorDataPair<T> precursor, Property<T> prop) {

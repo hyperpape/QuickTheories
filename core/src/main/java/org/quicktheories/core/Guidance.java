@@ -1,10 +1,10 @@
 package org.quicktheories.core;
 
-import java.util.Collection;
-import java.util.Optional;
-import java.util.Set;
-
 import org.quicktheories.impl.Precursor;
+
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Provides hints for values to visit during search.
@@ -19,6 +19,7 @@ public interface Guidance {
 
   void exampleComplete();
 
-  Optional<Set<Precursor>> getGuidanceRelevantPrecursors();
+  Optional<Map<Collection<Long>, Precursor>> getGuidanceRelevantPrecursors();
 
+  boolean matches(Collection<Long> coverage);
 }

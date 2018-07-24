@@ -15,6 +15,10 @@ class Property<T> {
     this.gen = gen;
   }
 
+  Predicate<T> getTest() {
+    return test;
+  }
+
   Gen<T> getGen() {
     return this.gen;
   }

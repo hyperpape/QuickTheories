@@ -1,11 +1,11 @@
 package org.quicktheories.core;
 
+import org.quicktheories.impl.Precursor;
+
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-
-import org.quicktheories.impl.Precursor;
 
 public class NoGuidance implements Guidance {
 
@@ -23,13 +23,18 @@ public class NoGuidance implements Guidance {
   }
 
   @Override
-  public Optional<Set<Precursor>> getGuidanceRelevantPrecursors() {
+  public Optional<Map<Collection<Long>, Precursor>> getGuidanceRelevantPrecursors() {
     return Optional.empty();
   }
 
   @Override
   public void newExample(Precursor precursor) {
  
+  }
+
+  @Override
+  public boolean matches(Collection<Long> coverage) {
+    return false;
   }
 
 }
