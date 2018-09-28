@@ -37,7 +37,7 @@ public final class TheoryRunner<P, T> {
   }
 
   public <S> List<Pair<T, S>> check(final Predicate<T> property, Function<T, S> f) {
-    final Core core = new Core(this.strategy);
+    final Core<S,T> core = new Core<>(this.strategy);
     final Property<T> prop = new Property<>(property,
         this.precursorSource.map(this.precursorToValue));
     final SearchResult<T> results = core.run(prop, f);
@@ -46,12 +46,7 @@ public final class TheoryRunner<P, T> {
     } else if (results.wasExhausted()) {
       this.strategy.reporter().valuesExhausted(results.getExecutedExamples());
     }
-    List<Pair<T, S>> pairs = new ArrayList<>();
-    for (Object obj : core.getValues()) {
-        pairs.add((Pair<T,S>) obj);
-    }
-    return pairs;
-
+    return core.getValues();
   }
 
   @SuppressWarnings("unchecked")

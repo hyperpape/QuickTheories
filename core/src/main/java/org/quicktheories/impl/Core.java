@@ -11,9 +11,9 @@ import org.quicktheories.core.Guidance;
 import org.quicktheories.core.Strategy;
 
 
-class Core {
+class Core<S,T> {
 
-  private static List<Object> values = null; // LOL, nothing matters
+  private List<Pair<T,S>> values = null;
   private final Strategy      config;
   private int                 examplesUsed           = 0;
   private Optional<Throwable> smallestFoundThrowable = Optional.empty();
@@ -24,7 +24,7 @@ class Core {
     this.config = config;
   }
 
-  <T, S> SearchResult<T> run(Property<T> prop, Function<T, S> f) {
+  SearchResult<T> run(Property<T> prop, Function<T, S> f) {
     List<T> falsifyingValues = new ArrayList<>();
     boolean exhausted = false;
     try {
@@ -43,7 +43,7 @@ class Core {
         smallestFoundThrowable);
   }
 
-  <T, S> Optional<Pair<Falsification<T>, PrecursorDataPair<T>>> findFalsifyingValue(
+  Optional<Pair<Falsification<T>, PrecursorDataPair<T>>> findFalsifyingValue(
       Property<T> prop, Function<T, S> someFn) {
     
     Guidance guidance = config.guidance();
@@ -83,11 +83,11 @@ class Core {
     return Optional.empty();
   }
 
-  protected List<Object> getValues() {
+  protected List<Pair<T, S>> getValues() {
     return values;
   }
 
-  protected <T, S> void handleExploredValues(Guidance guidance, Property<T> prop, Function<T, S> f) {
+  protected void handleExploredValues(Guidance guidance, Property<T> prop, Function<T, S> f) {
     if (f != null) {
       guidance.getGuidanceRelevantPrecursors().ifPresent(precursorMap -> {
         for (Map.Entry<Collection<Long>, Precursor> entry : precursorMap.entrySet()) {
@@ -103,9 +103,8 @@ class Core {
     }
   }
   
-  // Convinces FindBugs this is on the level
-  protected static <T,S> void staticStoreValues(List<Pair<T,S>> pairs) {
-    values = new ArrayList<>(pairs);
+  protected void staticStoreValues(List<Pair<T,S>> pairs) {
+    values = pairs;
   }
 
 
