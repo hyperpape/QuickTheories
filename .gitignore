@@ -6,3 +6,5 @@ target
 hist.txt
 /bin/
 dependency-reduced-pom.xml
+*iml
+.idea
