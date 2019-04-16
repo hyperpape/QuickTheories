@@ -1,16 +1,38 @@
+package com.justinblank.quicklooktest;
+
 import org.quicktheories.api.Pair;
 import org.quicktheories.core.Configuration;
 import org.quicktheories.core.Gen;
 import org.quicktheories.core.Strategy;
 import org.quicktheories.generators.SourceDSL;
+import org.quicktheories.impl.AutoRunner;
 import org.quicktheories.impl.TheoryRunner;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
 public class Test {
 
     public static void main(String[] args) {
+        try {
+            testExploration();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            System.exit(0);
+        }
+    }
+
+    private static void testAutoRunner() throws Exception {
+        AutoRunner runner = new AutoRunner("org.quicktheories.Test", "incorrectIsEmailValid", Arrays.asList("java.lang.String"));
+        runner.run().forEach(value -> {
+            String msg = "\"" + value.first() + "\" -> " + value.second();
+            System.out.println(msg);
+        });
+    }
+
+    private static void testExploration() {
         Function<String, Boolean> fn = Test::incorrectIsEmailValid;
         List<Pair<String, Boolean>> values = explore(fn, SourceDSL.strings().basicLatinAlphabet().ofLengthBetween(0, 32));
         values.forEach(value -> {
@@ -78,5 +100,4 @@ public class Test {
         }
         return true;
     }
-
 }
