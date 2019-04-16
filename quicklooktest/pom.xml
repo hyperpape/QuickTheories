@@ -11,23 +11,36 @@
     </parent>
 
     <groupId>org.quicktheories</groupId>
-    <artifactId>quicklook</artifactId>
+    <artifactId>quicklooktest</artifactId>
 
     <dependencies>
 
         <dependency>
             <groupId>org.quicktheories</groupId>
-            <artifactId>${project.version}</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.quicktheories</groupId>
             <artifactId>quicktheories</artifactId>
-            <version>${project.version}</version>
+            <version>0.26-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.quicktheories</groupId>
             <artifactId>coverage</artifactId>
-            <version>${project.version}</version>
+            <version>0.26-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <build>
+    <plugins>
+
+        <plugin>
+            <version>3.8.0</version>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>1.9</source>
+                <target>1.9</target>
+                <compilerId>javac-with-errorprone</compilerId>
+                <forceJavacCompilerUse>true</forceJavacCompilerUse>
+            </configuration>
+        </plugin>
+    </plugins>
+    </build>
 </project>

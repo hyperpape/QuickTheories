@@ -55,6 +55,7 @@
 	<modules>
 		<module>core</module>
 		<module>coverage</module>
+		<module>quicklooktest</module>
 	</modules>
 
 	<build>
@@ -63,10 +64,10 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
-					<version>3.6.0</version>
+					<version>3.9.0</version>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<source>1.9</source>
+						<target>1.9</target>
 					</configuration>
 				</plugin>
 				<plugin>
