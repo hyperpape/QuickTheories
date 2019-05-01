@@ -1,19 +1,13 @@
 package org.quicktheories.dsl;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.annotation.CheckReturnValue;
 
-import org.quicktheories.api.AsString;
-import org.quicktheories.api.Function3;
-import org.quicktheories.api.Predicate3;
-import org.quicktheories.api.Subject1;
-import org.quicktheories.api.Subject4;
-import org.quicktheories.api.TriConsumer;
-import org.quicktheories.api.Tuple3;
-import org.quicktheories.api.Tuple4;
+import org.quicktheories.api.*;
 import org.quicktheories.core.Gen;
 import org.quicktheories.core.Strategy;
 import org.quicktheories.impl.TheoryRunner;
@@ -157,8 +151,22 @@ public final class TheoryBuilder3<A, B, C> {
             combine());
     qc.check(x -> property.test(x._1, x._2, x._3));
   }
-  
-  
+
+  /**
+   * Checks a boolean property across a random sample of possible values
+   *
+   * @param property
+   *          property to check
+   */
+  public <D> List<Pair<Tuple3<A, B, C>, D>> check(final Predicate3<A, B, C> property, TriFunction<A, B, C, D> f) {
+    final TheoryRunner<Tuple3<A, B, C>, Tuple3<A, B, C>> qc = TheoryRunner
+            .runner(
+                    this.state.get(),
+                    combine());
+    final Function<Tuple3<A, B, C>, D> wrapped = (tuple) -> f.apply(tuple._1, tuple._2, tuple._3);
+    return qc.check(x -> property.test(x._1, x._2, x._3), wrapped);
+  }
+
   /**
    * Checks a property across a random sample of possible values where
    * falsification is indicated by an unchecked exception such as an assertion

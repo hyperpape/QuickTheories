@@ -1,5 +1,6 @@
 package org.quicktheories.dsl;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
@@ -72,6 +73,14 @@ public final class TheoryBuilder2<A, B> implements Subject2<A, B> {
         this.state.get(),
         combine());
     qc.check(x -> property.test(x._1, x._2));
+  }
+
+  public <S> List<Pair<Pair<A, B>, S>> check(final BiPredicate<A, B> property, BiFunction<A, B, S> f) {
+    final TheoryRunner<Pair<A, B>, Pair<A, B>> qc = TheoryRunner.runner(
+            this.state.get(),
+            combine());
+    final Function<Pair<A, B>, S> wrapped = pair -> f.apply(pair._1, pair._2);
+    return qc.check(x -> property.test(x._1, x._2), wrapped);
   }
 
   /**

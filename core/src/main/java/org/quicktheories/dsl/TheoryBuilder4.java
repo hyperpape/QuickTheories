@@ -1,19 +1,13 @@
 package org.quicktheories.dsl;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 import javax.annotation.CheckReturnValue;
 
-import org.quicktheories.api.AsString;
-import org.quicktheories.api.Function4;
-import org.quicktheories.api.Predicate4;
-import org.quicktheories.api.QuadConsumer;
-import org.quicktheories.api.Subject1;
-import org.quicktheories.api.Subject5;
-import org.quicktheories.api.Tuple4;
-import org.quicktheories.api.Tuple5;
+import org.quicktheories.api.*;
 import org.quicktheories.core.Gen;
 import org.quicktheories.core.Strategy;
 import org.quicktheories.impl.TheoryRunner;
@@ -149,6 +143,22 @@ public final class TheoryBuilder4<A, B, C, D> {
             combine());
     qc.check(
         x -> property.test(x._1, x._2, x._3, x._4));
+  }
+
+
+  /**
+   * Checks a boolean property across a random sample of possible values
+   *
+   * @param property
+   *          property to check
+   */
+  public <E> List<Pair<Tuple4<A, B, C, D>, E>> check(final Predicate4<A, B, C, D> property, QuadFunction<A, B, C, D, E> f) {
+    final TheoryRunner<Tuple4<A, B, C, D>, Tuple4<A, B, C, D>> qc = TheoryRunner
+            .runner(
+                    this.state.get(),
+                    combine());
+    final Function<Tuple4<A, B, C, D>, E> wrapped = (tuple) -> f.apply(tuple._1, tuple._2, tuple._3, tuple._4);
+    return qc.check(x -> property.test(x._1, x._2, x._3, x._4), wrapped);
   }
 
   /**
