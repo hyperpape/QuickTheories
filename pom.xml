@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.quicktheories</groupId>
-	<artifactId>quicktheories-parent</artifactId>
-	<version>0.26-SNAPSHOT</version>
+	<groupId>com.justinblank</groupId>
+	<artifactId>quicklook-parent</artifactId>
+	<version>0.1</version>
 	<name>quicktheories-parent</name>
 
 	<organization>
-		<name>org.quicktheories</name>
+		<name>com.justinblank</name>
 	</organization>
 	<packaging>pom</packaging>
 
@@ -21,35 +21,10 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-	<scm>
-		<connection>scm:git:https://github.com/NCR-CoDE/QuickTheories.git</connection>
-		<developerConnection>scm:git:git@github.com:NCR-CoDE/QuickTheories.git</developerConnection>
-		<url>https://github.com/NCR-CoDE/QuickTheories.git</url>
-		<tag>HEAD</tag>
-	</scm>
-	<issueManagement>
-		<url>https://github.com/NCR-CoDE/QuickTheories/issues</url>
-		<system>GitHub</system>
-	</issueManagement>
-
-	<developers>
-		<developer>
-			<id>henry</id>
-			<name>Henry Coles</name>
-			<email>henry@pitest.org</email>
-		</developer>
-		<developer>
-			<id>katy</id>
-			<name>Katy Rae</name>
-			<email>katy.rae@ncr.com</email>
-		</developer>
-	</developers>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<bintray.repo>ncr-code/ncrcoe</bintray.repo>
-		<bintray.package>QuickTheories</bintray.package>
 	</properties>
 
 	<modules>
@@ -136,14 +111,6 @@
 		</profile>
 
 	</profiles>
-
-	<distributionManagement>
-		<repository>
-			<id>bintray-ncrcoe</id>
-			<url>https://api.bintray.com/maven/${bintray.repo}/${bintray.package}/;publish=1</url>
-		</repository>
-	</distributionManagement>
-
 
 	<!-- common dependencies used in all subprojects -->
 	<dependencies>

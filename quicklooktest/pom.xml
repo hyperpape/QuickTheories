@@ -5,25 +5,25 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>quicktheories-parent</artifactId>
-        <groupId>org.quicktheories</groupId>
-        <version>0.26-SNAPSHOT</version>
+        <artifactId>quicklook-parent</artifactId>
+        <groupId>com.justinblank</groupId>
+        <version>0.1</version>
     </parent>
 
-    <groupId>org.quicktheories</groupId>
+    <groupId>com.justinblank</groupId>
     <artifactId>quicklooktest</artifactId>
 
     <dependencies>
 
         <dependency>
-            <groupId>org.quicktheories</groupId>
-            <artifactId>quicktheories</artifactId>
-            <version>0.26-SNAPSHOT</version>
+            <groupId>com.justinblank</groupId>
+            <artifactId>quicklook</artifactId>
+            <version>0.1</version>
         </dependency>
         <dependency>
-            <groupId>org.quicktheories</groupId>
-            <artifactId>coverage</artifactId>
-            <version>0.26-SNAPSHOT</version>
+            <groupId>com.justinblank</groupId>
+            <artifactId>quicklook-coverage</artifactId>
+            <version>0.1</version>
         </dependency>
     </dependencies>
 

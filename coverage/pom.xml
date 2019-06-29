@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
-		<artifactId>quicktheories-parent</artifactId>
-		<groupId>org.quicktheories</groupId>
-		<version>0.26-SNAPSHOT</version>
+		<artifactId>quicklook-parent</artifactId>
+		<groupId>com.justinblank</groupId>
+		<version>0.1</version>
 	</parent>
-	<artifactId>coverage</artifactId>
-	<name>coverage</name>
+	<artifactId>quicklook-coverage</artifactId>
+	<name>quicklook-coverage</name>
 	
 	<properties>
 	  <asm.version>6.0</asm.version>
@@ -36,8 +36,8 @@
           <version>1.7.5</version>
 		</dependency>
 		<dependency>
-			<groupId>org.quicktheories</groupId>
-			<artifactId>quicktheories</artifactId>
+			<groupId>com.justinblank</groupId>
+			<artifactId>quicklook</artifactId>
             <version>${project.version}</version>
 		</dependency>
 		<dependency>
