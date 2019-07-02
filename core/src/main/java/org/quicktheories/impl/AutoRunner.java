@@ -8,18 +8,13 @@ import org.quicktheories.core.Strategy;
 import org.quicktheories.dsl.TheoryBuilder2;
 import org.quicktheories.dsl.TheoryBuilder3;
 import org.quicktheories.dsl.TheoryBuilder4;
-import org.quicktheories.generators.BooleansDSL;
-import org.quicktheories.generators.IntegersDSL;
-import org.quicktheories.generators.LongsDSL;
-import org.quicktheories.generators.StringsDSL;
+import org.quicktheories.generators.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.lang.reflect.Parameter;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -27,9 +22,13 @@ import java.util.stream.Collectors;
 /**
  * Runs an exploration of a method, automatically providing generators for its arguments.
  *
- * A precondition is that the method is either static or is defined on a class with a no-arg constructor.
+ * For the time being, a precondition is that the method has 1-4 parameters of specified types and is either static or
+ * is defined on a class with a no-arg constructor.
  */
 public class AutoRunner {
+
+    private static final List<String> RECOGNIZED_TYPES = Arrays.asList("java.lang.String", "java.lang.Integer",
+            "java.lang.Float", "java.lang.Long", "java.lang.Double", "java.lang.Boolean");
 
     private final String className;
     private final String methodName;
@@ -39,6 +38,46 @@ public class AutoRunner {
         this.className = Objects.requireNonNull(className);
         this.methodName = Objects.requireNonNull(methodName);
         this.argumentTypes = argumentTypes;
+    }
+
+    public static AutoRunner forClassMethod(String className, String methodName) {
+
+        try {
+            Class<?> cls = Class.forName(className);
+            Method[] methods = cls.getMethods();
+            Optional<Method> method = Arrays.stream(methods).
+                    filter(m -> m.getName().equals(methodName)).
+                    filter(m -> isUsableMethod(cls, m)).findFirst();
+            AutoRunner runner = method.map(m -> {
+                List<String> argumentTypes = Arrays.stream(m.getParameterTypes()).map(Class::getCanonicalName).collect(Collectors.toList());
+                return new AutoRunner(className, m.getName(), argumentTypes);
+            }).orElse(null);
+            return runner;
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean isUsableMethod(Class<?> cls, Method method) {
+        if (method.getParameterCount() == 0 || method.getParameterCount() > 4) {
+            return false;
+        }
+        boolean staticOrConstructable = Modifier.isStatic(method.getModifiers());
+        if (!staticOrConstructable) {
+            Constructor<?>[] constructors = cls.getConstructors();
+            staticOrConstructable = Arrays.stream(constructors).map(Constructor::getParameterCount).anyMatch(c -> c > 0);
+            if (!staticOrConstructable) {
+                return false;
+            }
+        }
+        for (Parameter parameter : method.getParameters()) {
+            Class<?> pClass = parameter.getType();
+            if (!RECOGNIZED_TYPES.contains(pClass.getCanonicalName())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public List<Pair<Object, Object>> run() throws Exception {
