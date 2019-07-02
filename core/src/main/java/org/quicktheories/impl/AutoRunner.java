@@ -254,10 +254,15 @@ public class AutoRunner {
             case "java.lang.Boolean":
                 gen = new BooleansDSL().all();
                 break;
+            case "java.lang.Double":
+                gen = new DoublesDSL().any();
+                break;
+            case "java.lang.Float":
+                gen = new FloatsDSL().any();
+                break;
             default:
                 throw new IllegalArgumentException("Unrecognized type (" + typeString + ")");
         }
         return (Gen<Object>) gen;
     }
-
 }
