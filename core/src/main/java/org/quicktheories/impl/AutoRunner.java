@@ -66,7 +66,7 @@ public class AutoRunner {
         boolean staticOrConstructable = Modifier.isStatic(method.getModifiers());
         if (!staticOrConstructable) {
             Constructor<?>[] constructors = cls.getConstructors();
-            staticOrConstructable = Arrays.stream(constructors).map(Constructor::getParameterCount).anyMatch(c -> c > 0);
+            staticOrConstructable = Arrays.stream(constructors).map(Constructor::getParameterCount).anyMatch(c -> c == 0);
             if (!staticOrConstructable) {
                 return false;
             }
