@@ -97,7 +97,6 @@
 						<configuration>
 							<source>1.9</source>
 							<target>1.9</target>
-							<compilerId>javac-with-errorprone</compilerId>
 							<forceJavacCompilerUse>true</forceJavacCompilerUse>
 						</configuration>
 						<dependencies>
