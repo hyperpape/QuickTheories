@@ -32,10 +32,10 @@ public class ConfigurationTest {
   }
 
   @Test
-  public void shouldDefaultShrinkCyclesTo100TimesTheNumberOfExamples() {
+  public void shouldDefaultShrinkCyclesTo5TimesTheNumberOfExamples() {
     System.setProperty("QT_EXAMPLES", "500");
     assertThat(Configuration.systemStrategy().shrinkCycles())
-        .isEqualTo(500 * 100);
+        .isEqualTo(500 * 5);
   }
 
 }

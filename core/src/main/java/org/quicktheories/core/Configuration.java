@@ -39,7 +39,7 @@ public abstract class Configuration {
     Optional<String> userValue = Optional
         .ofNullable(System.getProperty(SHRINKS));
     return userValue.map(Integer::valueOf)
-        .orElseGet(() -> pickExamples() * 100);
+        .orElseGet(() -> pickExamples() * 5);
   }
 
   private static int pickExamples() {
